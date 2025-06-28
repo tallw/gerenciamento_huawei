@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gerenciamento ONU - OLT Huawei</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-network-wired me-2"></i>
+                Sistema ONU Manager
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#provisionar">Provisionar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#verificar">Verificar Potência</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#perfis">Perfis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#configuracoes">Configurações</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2">
+                <div class="sidebar">
+                    <div class="list-group list-group-flush">
+                        <a href="#dashboard" class="list-group-item list-group-item-action active" data-section="dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a href="#provisionar" class="list-group-item list-group-item-action" data-section="provisionar">
+                            <i class="fas fa-plus-circle me-2"></i>Provisionar ONU
+                        </a>
+                        <a href="#verificar" class="list-group-item list-group-item-action" data-section="verificar">
+                            <i class="fas fa-chart-line me-2"></i>Verificar Potência
+                        </a>
+                        <a href="#desprovisionar" class="list-group-item list-group-item-action" data-section="desprovisionar">
+                            <i class="fas fa-minus-circle me-2"></i>Desprovisionar
+                        </a>
+                        <a href="#perfis" class="list-group-item list-group-item-action" data-section="perfis">
+                            <i class="fas fa-cogs me-2"></i>Perfis ONU
+                        </a>
+                        <a href="#configuracoes" class="list-group-item list-group-item-action" data-section="configuracoes">
+                            <i class="fas fa-server me-2"></i>Config. OLT
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-md-9 col-lg-10">
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="content-section active">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+                        <button class="btn btn-outline-primary" onclick="loadClientes()">
+                            <i class="fas fa-sync-alt me-1"></i>Atualizar
+                        </button>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card stat-card bg-primary text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h6 class="card-title">ONUs Ativas</h6>
+                                            <h3 id="total-onus">0</h3>
+                                        </div>
+                                        <i class="fas fa-network-wired fa-2x opacity-75"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card bg-success text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h6 class="card-title">VLAN 301</h6>
+                                            <h3 id="vlan-301">0</h3>
+                                        </div>
+                                        <i class="fas fa-ethernet fa-2x opacity-75"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card bg-info text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h6 class="card-title">VLAN 600</h6>
+                                            <h3 id="vlan-600">0</h3>
+                                        </div>
+                                        <i class="fas fa-ethernet fa-2x opacity-75"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card bg-warning text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h6 class="card-title">Perfis</h6>
+                                            <h3 id="total-perfis">0</h3>
+                                        </div>
+                                        <i class="fas fa-cogs fa-2x opacity-75"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ONUs Table -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-list me-2"></i>ONUs Provisionadas</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="onus-table">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>SN da ONU</th>
+                                            <th>Switch</th>
+                                            <th>Porta OLT</th>
+                                            <th>Interface/VLAN</th>
+                                            <th>Data Provisionamento</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="onus-tbody">
+                                        <!-- Dados carregados via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Provisionar Section -->
+                <div id="provisionar-section" class="content-section">
+                    <h2><i class="fas fa-plus-circle me-2"></i>Provisionar ONU</h2>
+                    
+                    <!-- Detecção de ONUs -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Detectar ONUs Disponíveis</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="interface-detectar" class="form-label">Interface (opcional)</label>
+                                                <input type="text" class="form-control" id="interface-detectar" placeholder="Ex: 0/1/0 ou deixe vazio para todas">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 d-flex align-items-end">
+                                            <button type="button" class="btn btn-info" onclick="detectarONUs()">
+                                                <i class="fas fa-search me-1"></i>Detectar ONUs
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="onus-detectadas" class="mt-3">
+                                        <!-- Resultados da detecção aparecerão aqui -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Dados da ONU</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="provisionar-form">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="sn" class="form-label">Serial Number (SN)</label>
+                                                    <input type="text" class="form-control" id="sn" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="onu-id" class="form-label">ONU ID</label>
+                                                    <input type="number" class="form-control" id="onu-id" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="interface" class="form-label">Interface GPON</label>
+                                                    <input type="text" class="form-control" id="interface" placeholder="Ex: 0/1/0" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="perfil" class="form-label">Perfil</label>
+                                                    <select class="form-select" id="perfil" required>
+                                                        <option value="">Selecione um perfil</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="descricao-equipamento" class="form-label">Descrição do Equipamento</label>
+                                            <input type="text" class="form-control" id="descricao-equipamento" placeholder="Ex: ONU Cliente João">
+                                        </div>
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-plus me-1"></i>Provisionar ONU
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Status</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="provisionar-status" class="alert alert-info">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Preencha os dados para provisionar uma ONU
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verificar Potência Section -->
+                <div id="verificar-section" class="content-section">
+                    <h2><i class="fas fa-chart-line me-2"></i>Verificar Potência</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Consultar Potência</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="verificar-form">
+                                        <div class="mb-3">
+                                            <label for="sn-verificar" class="form-label">Serial Number (SN)</label>
+                                            <input type="text" class="form-control" id="sn-verificar" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-search me-1"></i>Verificar Potência
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Resultado</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="potencia-resultado">
+                                        <p class="text-muted">Nenhuma consulta realizada</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico de Potência -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Gráfico de Potência</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="potencia-chart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desprovisionar Section -->
+                <div id="desprovisionar-section" class="content-section">
+                    <h2><i class="fas fa-minus-circle me-2"></i>Desprovisionar ONU</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Remover ONU</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="desprovisionar-form">
+                                        <div class="mb-3">
+                                            <label for="sn-desprovisionar" class="form-label">Serial Number (SN)</label>
+                                            <input type="text" class="form-control" id="sn-desprovisionar" required>
+                                        </div>
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            <strong>Atenção:</strong> Esta ação irá remover a ONU da OLT e do banco de dados.
+                                        </div>
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-trash me-1"></i>Desprovisionar ONU
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Status</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="desprovisionar-status" class="alert alert-info">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Digite o SN da ONU para desprovisioná-la
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Perfis Section -->
+                <div id="perfis-section" class="content-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="fas fa-cogs me-2"></i>Perfis ONU</h2>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#perfilModal">
+                            <i class="fas fa-plus me-1"></i>Novo Perfil
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="perfis-table">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Nome do Perfil</th>
+                                            <th>GEM Port</th>
+                                            <th>Line Profile - Srv Profile</th>
+                                            <th>VLAN</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="perfis-tbody">
+                                        <!-- Dados carregados via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configurações Section -->
+                <div id="configuracoes-section" class="content-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="fas fa-server me-2"></i>Configurações da OLT</h2>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#configModal">
+                            <i class="fas fa-plus me-1"></i>Nova Configuração
+                        </button>
+                    </div>
+
+                    <!-- Status da Configuração Ativa -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Configuração Ativa</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="config-ativa-info">
+                                        <p class="text-muted">Carregando configuração ativa...</p>
+                                    </div>
+                                    <button class="btn btn-outline-primary" onclick="testarConexaoAtiva()">
+                                        <i class="fas fa-plug me-1"></i>Testar Conexão
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Configurações -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Todas as Configurações</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="configs-table">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>IP</th>
+                                            <th>Porta</th>
+                                            <th>Usuário</th>
+                                            <th>Tipo</th>
+                                            <th>Status</th>
+                                            <th>Ativa</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="configs-tbody">
+                                        <!-- Dados carregados via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Configuração OLT -->
+    <div class="modal fade" id="configModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nova Configuração OLT</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="config-form">
+                        <input type="hidden" id="config-id">
+                        <div class="mb-3">
+                            <label for="nome-config" class="form-label">Nome da Configuração</label>
+                            <input type="text" class="form-control" id="nome-config" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="ip-olt" class="form-label">IP da OLT</label>
+                                    <input type="text" class="form-control" id="ip-olt" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="porta-olt" class="form-label">Porta</label>
+                                    <input type="number" class="form-control" id="porta-olt" value="22" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="usuario-olt" class="form-label">Usuário</label>
+                                    <input type="text" class="form-control" id="usuario-olt" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="senha-olt" class="form-label">Senha</label>
+                                    <input type="password" class="form-control" id="senha-olt" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipo-conexao" class="form-label">Tipo de Conexão</label>
+                            <select class="form-select" id="tipo-conexao" required>
+                                <option value="">Selecione o tipo</option>
+                                <option value="ssh">SSH</option>
+                                <option value="telnet">Telnet</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="salvarConfigOLT()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Perfil -->
+    <div class="modal fade" id="perfilModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Novo Perfil ONU</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="perfil-form">
+                        <input type="hidden" id="perfil-id">
+                        <div class="mb-3">
+                            <label for="nome-perfil" class="form-label">Nome do Perfil</label>
+                            <input type="text" class="form-control" id="nome-perfil" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="gemport" class="form-label">GEM Port</label>
+                            <input type="text" class="form-control" id="gemport" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lineprofile-srvprofile" class="form-label">Line Profile - Srv Profile</label>
+                            <input type="text" class="form-control" id="lineprofile-srvprofile" placeholder="Ex: 1-1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="vlan" class="form-label">VLAN</label>
+                            <select class="form-select" id="vlan" required>
+                                <option value="">Selecione a VLAN</option>
+                                <option value="301">301</option>
+                                <option value="600">600</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="salvarPerfil()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+
