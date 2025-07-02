@@ -1,0 +1,15 @@
+{
+    "name": "olt-management/ssh-connection",
+    "description": "Sistema de gerenciamento ONU com suporte SSH robusto",
+    "type": "project",
+    "require": {
+        "phpseclib/phpseclib": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "OLTManagement\\": "classes/"
+        }
+    },
+    "minimum-stability": "stable"
+}
+
